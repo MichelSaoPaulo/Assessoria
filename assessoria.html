@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>MIVA - ASSESSORIA</title>
+
+    <!-- Fonte Chalala do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Chalala&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url("Fundo.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #222;
+        }
+
+        header {
+            font-family: 'Chalala', cursive;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Fotos e vídeo */
+
+        .content {
+            display: flex;
+            gap: 10px;
+            height: 80vh;       /* altura total do container para desktop */
+            max-height: 600px;  /* altura máxima para desktop */
+        }
+
+        .main-photo {
+            flex: 2;            /* vídeo ocupa o dobro do espaço */
+            height: 100%;
+        }
+
+        .main-photo video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .side-photos {
+            flex: 1;            /* fotos ocupam 1/3 do espaço */
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
+            height: 100%;
+        }
+
+        .side-photos img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+        }
+
+        /* Descrição */
+
+        .description {
+            padding: 20px 40px;
+            font-size: 18px;
+            line-height: 1.6;
+            background-color: rgba(255, 255, 255, 0.9);
+            margin: 20px;
+            border-radius: 10px;
+        }
+
+        .description h2,
+        .description h3,
+        .description p {
+            margin: 0 0 15px 0;
+        }
+
+        /* Depoimentos */
+
+        .testimonials {
+            text-align: center;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .testimonials h2 {
+            margin-bottom: 20px;
+        }
+
+        .testimonials img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .testimonials img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Popup modal background */
+        .modal-overlay {
+            display: none; /* escondido inicialmente */
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        /* Modal content */
+        .modal-content {
+            background: white;
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+
+        .modal-image {
+            flex: 1;
+            max-width: 50%;
+        }
+
+        .modal-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .modal-text {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Footer */
+
+        footer {
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0;
+        }
+
+        .footer-item img {
+            height: 24px;
+        }
+
+        .footer-item.right {
+            text-align: right;
+        }
+
+        a {
+            text-decoration: none;
+            color: #222;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Music controls */
+
+        .music-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            max-width: 200px;
+        }
+
+        .music-controls input[type="range"] {
+            width: 100%;
+        }
+
+        .music-controls button {
+            margin-top: 10px;
+            padding: 6px 12px;
+            border: none;
+            background-color: #25D366;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .music-controls button:hover {
+            background-color: #1ebe5d;
+        }
+
+        /* MEDIA QUERIES */
+
+        /* Tablets */
+        @media (max-width: 900px) {
+            .content {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .side-photos {
+                grid-template-columns: repeat(2, 1fr);
+                padding-left: 0;
+                min-width: auto;
+            }
+
+            .main-photo img {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+
+        /* Pequenos dispositivos */
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+                height: auto;          /* altura automática para evitar corte */
+                max-height: none;      /* remove limite de altura */
+            }
+
+            .main-photo {
+                flex: none;
+                height: auto;
+            }
+
+            .side-photos {
+                flex: none;
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: auto auto;
+                gap: 10px;
+                height: auto;
+                margin-top: 15px;
+            }
+
+            .side-photos img {
+                height: auto;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                font-size: 22px;
+                padding: 15px;
+            }
+
+            .description {
+                position: relative; /* mantém no fluxo para não sobrepor */
+                z-index: 1;
+                margin-top: 20px;   /* espaço entre fotos/vídeo e descrição */
+                background-color: rgba(255, 255, 255, 0.95);
+                padding: 20px 15px;
+                font-size: 16px;
+                border-radius: 10px;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+
+            .content {
+                padding: 15px 10px;
+                margin: 10px;
+            }
+
+            .side-photos {
+                grid-template-columns: 1fr 1fr;
+                padding-left: 0;
+                gap: 10px;
+            }
+
+            .main-photo video {
+                max-width: 100%;
+                height: auto;
+            }
+
+            .testimonials {
+                grid-template-columns: 1fr;
+                padding: 15px 10px;
+                margin: 10px;
+            }
+
+            footer {
+                padding: 15px 10px;
+                font-size: 14px;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .footer-item.right {
+                text-align: center;
+                margin-top: 10px;
+            }
+
+            .music-controls {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                max-width: 160px;
+                padding: 10px;
+            }
+
+            .music-controls button {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+        }
+        <style>
+.solicitar-orcamento {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  background-color: #27ae60;
+  padding: 12px 20px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+.solicitar-orcamento a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+}
+
+.solicitar-orcamento a:hover {
+  text-decoration: underline;
+}
+</style>
+
+    </style>
+</head>
+<body>
+
+<!-- 1. Cabeçalho -->
+<header>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <span style="font-family: 'Playfair Display', serif; font-size: 40px; color: black;">
+        MIVA - ASSESSORIA - NOSSA EQUIPE
+    </span>
+</header>
+
+<!-- 2. Fotos e vídeo -->
+<div class="content">
+    <div class="main-photo">
+        <video controls>
+            <source src="video.mp4" type="video/mp4">
+            Seu navegador não suporta a reprodução de vídeo.
+        </video>
+    </div>
+    <div class="side-photos">
+        <img src="foto1.jpg" alt="Evento 1">
+        <img src="foto2.jpg" alt="Evento 2">
+        <img src="foto3.jpg" alt="Evento 3">
+        <img src="foto4.jpg" alt="Evento 4">
+    </div>
+</div>
+
+<!-- 3. Descrição -->
+<div class="description">
+    <h2 style="text-align: center;">
+        A Miva Assessoria, sob a condução do Mestre de Cerimônia Michel, é especialista em transformar eventos em momentos únicos, emocionantes e inesquecíveis.
+    </h2>
+
+    <h3 style="text-align: justify;"><strong>O que a Miva oferece?</strong></h3>
+
+    <p style="text-align: justify;">
+        Na Miva Assessoria, cada evento é conduzido com maestria para se tornar uma experiência memorável. Sob a liderança do Mestre de Cerimônia Michel, entregamos muito mais do que organização — proporcionamos emoção, elegância e fluidez em cada momento, com carisma e sofisticação.
+    </p>
+
+    <p style="text-align: justify; font-weight: bold; color: #8B0000;">
+        O nosso diferencial? Uma equipe jovem, dinâmica e apaixonada pelo que faz. Com energia, criatividade e um olhar atento às tendências, nossa equipe resolve desafios com agilidade e inteligência, sempre buscando a melhor solução para garantir que tudo saia exatamente como planejado — ou ainda melhor. Estamos prontos para agir com rapidez, pensar fora da caixa e fazer acontecer!
+    </p>
+
+    <p style="text-align: justify;">
+        Oferecemos soluções completas de assessoria, com atendimento personalizado que se adapta ao perfil de cada cliente: desde a assessoria total, passando pela assessoria do dia, até o suporte exclusivo à noiva, com atenção dedicada aos mínimos detalhes.
+    </p>
+
+    <p style="text-align: justify;">
+        Com profissionalismo, sensibilidade e excelência, transformamos sonhos em realidade. A Miva é sinônimo de eventos inesquecíveis — entre em contato e descubra como tornar o seu evento um verdadeiro sucesso!
+    </p>
+</div>
+
+<!-- 4. Depoimentos em fotos -->
+<div class="testimonials">
+
+    <h2><strong>Equipe</strong></h2>
+
+    <img src="michel.jpg" alt="Michel" data-text="Michel é nosso Mestre de Cerimônia e Assessor, especialista em conduzir eventos com carisma, elegância e profissionalismo. Com vasta experiência no segmento, ele atua com extremo carinho e dedicação, cuidando de cada detalhe para que tudo aconteça perfeitamente. Sua educação e postura impecável garantem uma condução harmoniosa e agradável, tornando o seu evento não apenas um sucesso, mas uma experiência inesquecível para todos os presentes.
+
+">
+    <img src="andry.jpg" alt="Andrielly" data-text="Andrielly é responsável pelo atendimento personalizado, garantindo atenção total aos detalhes com muita experiência, carinho e dedicação. Sua educação e sensibilidade fazem toda a diferença, proporcionando uma comunicação acolhedora e eficiente, que faz com que cada convidado se sinta único e valorizado.">
+    <img src="Tata.jpg" alt="Tata" data-text="Elizandra cuida da logística e organização com muita experiência, carinho e dedicação, garantindo que cada etapa do evento seja planejada com atenção minuciosa. Sua educação e profissionalismo tornam cada momento fluido e harmonioso, transformando seu evento em uma experiência inesquecível para todos os presentes.">
+    <img src="Renata.jpg" alt="Renata" data-text="Renata é responsável pela noiva, trazendo sensibilidade, experiência e profissionalismo para transformar sonhos em realidade. Com dedicação e muito carinho, ela oferece um atendimento personalizado e atento, acompanhando a noiva em cada etapa do processo — desde o preparo inicial até os momentos finais da cerimônia. Sua educação e empatia garantem que todas as necessidades e desejos sejam ouvidos e respeitados, proporcionando tranquilidade e segurança para que a noiva possa viver esse dia único com toda a beleza, conforto e perfeição que merece.">
+    <img src="Davi.jpg" alt="Davi" data-text="Davi é o responsável pela organização e pelo cuidado minucioso dos detalhes, garantindo que tudo esteja perfeitamente alinhado e organizado. Como suporte técnico, ele atua nos bastidores com muita experiência e dedicação, assegurando que todos os equipamentos e sistemas funcionem sem falhas. Seu profissionalismo e atenção fazem toda a diferença para que o evento transcorra de forma tranquila e impecável.">
+
+<div class="solicitar-orcamento">
+  <a href="https://wa.me/5511977834685" target="_blank">Solicite seu orçamento</a>
+</div>
+
+</div>
+
+<!-- Modal Popup -->
+<div class="modal-overlay" id="modal">
+    <div class="modal-content">
+        <div class="modal-image">
+            <img src="" alt="Foto ampliada" id="modal-img">
+        </div>
+        <div class="modal-text" id="modal-text">
+            <!-- Texto será inserido aqui -->
+        </div>
+    </div>
+    <div class="modal-close" id="modal-close">&times;</div>
+</div>
+
+<script>
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modal-img');
+    const modalText = document.getElementById('modal-text');
+    const modalClose = document.getElementById('modal-close');
+
+    // Seleciona todas as imagens da equipe
+    document.querySelectorAll('.testimonials img').forEach(img => {
+        img.addEventListener('click', () => {
+            modalImg.src = img.src;
+            modalImg.alt = img.alt;
+            modalText.textContent = img.dataset.text || '';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // trava scroll ao abrir modal
+        });
+    });
+
+    // Fecha modal ao clicar no X
+    modalClose.addEventListener('click', () => {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+
+    // Fecha modal ao clicar fora do conteúdo
+    modal.addEventListener('click', e => {
+        if(e.target === modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Fecha modal com ESC
+    window.addEventListener('keydown', e => {
+        if(e.key === 'Escape' && modal.classList.contains('active')) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+</script>
+
+<!-- 5. Rodapé -->
+<footer>
+    <div class="footer-item">
+        <a href="https://www.instagram.com/mivaassessoriasp" target="_blank">
+            <img src="instagram.jpg" alt="Instagram">
+            <span>Acesse nosso Instagram</span>
+        </a>
+    </div>
+
+    <div class="footer-item right">
+        <span>Atendemos Grande São Paulo</span>
+    </div>
+</footer>
+
+<!-- 6. Música de fundo -->
+<audio id="musica" autoplay loop>
+    <source src="musica.mp3" type="audio/mpeg">
+    Seu navegador não suporta áudio.
+</audio>
+
+<div class="music-controls">
+    <label for="volume">Volume:</label>
+    <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5" onchange="setVolume(this.value)">
+    <br>
+    <button onclick="toggleMusica()">Tocar / Pausar</button>
+    <br><br>
+    <a href="musica.mp3" download="musica.mp3">Baixar Música</a>
+</div>
+
+<script>
+    const musica = document.getElementById("musica");
+    musica.volume = 0.5; // volume médio
+
+    function toggleMusica() {
+        if (musica.paused) {
+            musica.play();
+        } else {
+            musica.pause();
+        }
+    }
+
+    function setVolume(val) {
+        musica.volume = val;
+    }
+</script>
+
+</body>
+</html>
+
